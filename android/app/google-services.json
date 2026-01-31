@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "374660438138",
+    "project_id": "capital-commons",
+    "storage_bucket": "capital-commons.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374660438138:android:68537e50b6642c8f0303c3",
+        "android_client_info": {
+          "package_name": "com.example.capital_commons"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbUS3tMatnKP9eXjWKMEyEJBjcd6jlPEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

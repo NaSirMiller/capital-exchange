@@ -1,3 +1,4 @@
+import "package:capital_commons/features/business_signup/views/business_signup_page.dart";
 import "package:capital_commons/features/investor_signup/views/investor_signup_page.dart";
 import "package:capital_commons/features/landing/views/landing_page.dart";
 import "package:capital_commons/features/login/views/login_page.dart";
@@ -18,6 +19,10 @@ final goRouter = GoRouter(
         GoRoute(
           path: "investor",
           builder: (_, _) => const InvestorSignupPage(),
+        ),
+        GoRoute(
+          path: "business",
+          builder: (_, _) => const BusinessSignupPage(),
         ),
       ],
     ),

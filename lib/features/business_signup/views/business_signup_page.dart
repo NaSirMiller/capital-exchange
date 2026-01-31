@@ -1,12 +1,12 @@
 import "package:capital_commons/core/loading_status.dart";
-import "package:capital_commons/features/investor_signup/cubit/investor_signup_cubit.dart";
+import "package:capital_commons/features/business_signup/cubit/business_signup_cubit.dart";
 import "package:capital_commons/utils/snackbar_message.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_hooks/flutter_hooks.dart";
 
-class InvestorSignupPage extends HookWidget {
-  const InvestorSignupPage({super.key});
+class BusinessSignupPage extends HookWidget {
+  const BusinessSignupPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +17,8 @@ class InvestorSignupPage extends HookWidget {
     final theme = Theme.of(context);
 
     return BlocProvider(
-      create: (_) => InvestorSignupCubit(),
-      child: BlocListener<InvestorSignupCubit, InvestorSignupState>(
+      create: (_) => BusinessSignupCubit(),
+      child: BlocListener<BusinessSignupCubit, BusinessSignupState>(
         listener: (context, state) {
           if (state.signupStatus.isFailure) {
             context.showSnackbarMessage(
@@ -53,7 +53,7 @@ class InvestorSignupPage extends HookWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
-                            "Create your investor account",
+                            "Create your business account",
                             style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -93,7 +93,7 @@ class InvestorSignupPage extends HookWidget {
                             child: ElevatedButton(
                               onPressed: () {
                                 context
-                                    .read<InvestorSignupCubit>()
+                                    .read<BusinessSignupCubit>()
                                     .submitSignupForm(
                                       email: emailController.text.trim(),
                                       password: passwordController.text,
