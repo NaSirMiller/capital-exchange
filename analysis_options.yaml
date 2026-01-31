@@ -1,1 +1,41 @@
+# Adapted from AppFlowy
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    invalid_annotation_target: ignore
+    avoid_redundant_argument_values: ignore
+    override_on_non_overriding_member: ignore # <--- ignore all those override warnings
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "build/**" # optional: exclude build folder
+    - "generated/**" # optional: exclude extra generated folders
+
+linter:
+  rules:
+    - require_trailing_commas
+
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_collection_literals
+    - prefer_final_fields
+    - prefer_final_in_for_each
+    - prefer_final_locals
+    - prefer_double_quotes
+
+    - sized_box_for_whitespace
+    - use_decorated_box
+
+    - unnecessary_parenthesis
+    - unnecessary_await_in_return
+    - unnecessary_raw_strings
+
+    - avoid_unnecessary_containers
+    - avoid_redundant_argument_values
+    - avoid_unused_constructor_parameters
+
+    - always_declare_return_types
+
+    - sort_constructors_first
+    - unawaited_futures
