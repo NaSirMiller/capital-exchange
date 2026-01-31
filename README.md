@@ -46,5 +46,3 @@ Many small businesses struggle to access capital, while residents want structure
 * Transparent, scalable, and community-driven
 
 ---
-
-Do you want me to do that next?
