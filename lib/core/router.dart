@@ -3,6 +3,7 @@ import "package:capital_commons/features/investor_signup/views/investor_signup_p
 import "package:capital_commons/features/landing/views/landing_page.dart";
 import "package:capital_commons/features/login/views/login_page.dart";
 import "package:capital_commons/features/signup/views/signup_page.dart";
+import "package:capital_commons/features/investor_dashboard/views/investor_dashboard_page.dart";
 import "package:flutter/cupertino.dart";
 import "package:go_router/go_router.dart";
 
@@ -27,5 +28,16 @@ final goRouter = GoRouter(
       ],
     ),
     GoRoute(path: "/login", builder: (_, _) => const LoginPage()),
+    GoRoute(
+      path: "/dashboard",
+      builder: (_, _) => const Placeholder(), // placeholder for now
+      routes: [
+        GoRoute(
+          path: "investor",
+          builder: (_, __) => const InvestorDashboardPage(),
+        ),
+      ],
+    ),
+
   ],
 );
