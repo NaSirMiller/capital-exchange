@@ -3,6 +3,8 @@ import "package:capital_commons/features/business_signup/views/business_signup_p
 import "package:capital_commons/features/investor_signup/views/investor_signup_page.dart";
 import "package:capital_commons/features/landing/views/landing_page.dart";
 import "package:capital_commons/features/login/views/login_page.dart";
+import "package:capital_commons/features/market/views/business_detail_page.dart";
+import "package:capital_commons/features/market/views/market_page.dart";
 import "package:capital_commons/features/signup/views/signup_page.dart";
 import "package:flutter/cupertino.dart";
 import "package:go_router/go_router.dart";
@@ -31,6 +33,12 @@ final goRouter = GoRouter(
     GoRoute(
       path: "/business/dashboard",
       builder: (_, _) => const BusinessDashboardPage(),
+    ),
+    GoRoute(path: "/market", builder: (_, _) => const MarketPage()),
+    GoRoute(
+      path: "/market/:id",
+      builder: (_, state) =>
+          BusinessDetailPage(businessId: state.pathParameters["id"]!),
     ),
   ],
 );
