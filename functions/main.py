@@ -20,13 +20,9 @@ from services.exchange_shares_service import (
     exchange_shares_service,
 )
 
+# Initialize Firebase Admin SDK
 initialize_app()
 
-# For cost control, you can set the maximum number of containers that can be
-# running at the same time. This helps mitigate the impact of unexpected
-# traffic spikes by instead downgrading performance. This limit is a per-function
-# limit. You can override the limit for each function using the max_instances
-# parameter in the decorator, e.g. @https_fn.on_request(max_instances=5).
 set_global_options(max_instances=10)
 
 
@@ -34,25 +30,42 @@ set_global_options(max_instances=10)
 def exchange_business_to_investor(
     req: https_fn.CallableRequest[dict[str, Any]],
 ) -> dict[str, Any]:
+    """Exchange shares from business to investor (callable function)"""
     data = req.data
 
+    logger.info("=" * 50)
+    logger.info("EXCHANGE CALLABLE FUNCTION CALLED")
+    logger.info(f"Auth context: {req.auth}")
+    logger.info(f"Request data: {req.data}")
+    logger.info("=" * 50)
+
+    data = req.data
     business_id = data.get("business_id")
     investor_id = data.get("investor_id")
     num_shares = data.get("num_shares")
 
+    logger.info(f"Extracted parameters:")
+    logger.info(f"  business_id: {business_id}")
+    logger.info(f"  investor_id: {investor_id}")
+    logger.info(f"  num_shares: {num_shares}")
+
     if business_id is None or investor_id is None or num_shares is None:
         logger.error(
-            "Missing arg",
+            "Missing required arguments",
             business_id=business_id,
             investor_id=investor_id,
             num_shares=num_shares,
         )
-        return {"status": 400, "error": "Missing arg"}
+        return {"status": 400, "error": "Missing required arguments"}
 
     try:
+        logger.info("Calling exchange_shares_service...")
         exchange_shares_service.exchange_shares_business_to_investor(
             business_id, investor_id, num_shares
         )
+        logger.info("Exchange completed successfully")
+        return {"status": 200, "message": f"Successfully exchanged {num_shares} shares"}
+
     except ExchangeSharesServiceError as e:
         logger.error(
             f"ExchangeSharesServiceError occurred while exchanging shares: {e}",
@@ -80,9 +93,48 @@ def get_revenue_and_expenses_from_pl_statement(
         }
 
     try:
+        data = req.get_json(force=True, silent=True)
+
+        if data is None:
+            logger.error("pl_statement_path is not valid (empty or None)")
+            return https_fn.Response(
+                response=json.dumps({"status": 400, "error": "Invalid request"}),
+                status=400,
+                headers=headers,
+            )
+
+        pl_statement_path = data.get("pl_statement_path")
+
+        if not pl_statement_path:
+            logger.error("pl_statement_path is not valid (empty or None)")
+            return https_fn.Response(
+                response=json.dumps(
+                    {"status": 400, "error": "pl_statement_path is required"}
+                ),
+                status=400,
+                headers=headers,
+            )
+
         rev_and_expenses = doc_client.get_statement_details(pl_statement_path)
     except DocumentExtractionsError as e:
         logger.error(f"DocumentExtractionError occurred: {e}")
         return {"status": 500, "error": "An internal error occurred"}
 
-    return rev_and_expenses
+        return https_fn.Response(
+            response=json.dumps(rev_and_expenses), status=200, headers=headers
+        )
+
+    except DocumentExtractionsError as e:
+        logger.error(f"DocumentExtractionsError: {e}")
+        return https_fn.Response(
+            response=json.dumps({"status": 500, "error": "An internal error occurred"}),
+            status=500,
+            headers=headers,
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        return https_fn.Response(
+            response=json.dumps({"status": 500, "error": "An internal error occurred"}),
+            status=500,
+            headers=headers,
+        )

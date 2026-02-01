@@ -1,4 +1,5 @@
 import "package:capital_commons/clients/auth_client.dart";
+import "package:capital_commons/clients/exchange_client.dart";
 import "package:capital_commons/clients/file_storage_client.dart";
 import "package:capital_commons/clients/pl_processing_client.dart";
 import "package:capital_commons/core/logger.dart";
@@ -34,6 +35,7 @@ Future<void> configureDependencies() async {
 
   // Register clients
   getIt.registerLazySingleton(() => AuthClient());
+  getIt.registerLazySingleton(() => ExchangeClient());
 
   // Register repositories
   getIt.registerLazySingleton(() => BusinessRepository());

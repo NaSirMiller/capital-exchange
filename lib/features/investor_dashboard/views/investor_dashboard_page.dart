@@ -16,8 +16,8 @@ final mockBusinesses = [
     "name": "Green Valley Farms",
     "description": "Organic produce and local goods",
     "industry": "Agriculture",
-    "logoFilepath": null,
-    "plDocFilepath": null,
+    "logoFilepath": "", // Changed from null to empty string
+    "plDocFilepath": "", // Changed from null to empty string
     "projectedRevenue": 450000.0,
     "projectedExpenses": 280000.0,
     "projectedProfit": 170000.0,
@@ -29,7 +29,7 @@ final mockBusinesses = [
     "address": "123 Farm Lane, Albany, NY",
     "goal": 250000.0,
     "numInvestors": 48,
-    "amountRaised": 185000,
+    "amountRaised": 185000.0, // Added .0 to ensure it's a double
     "yearFounded": "2018",
   },
   {
@@ -50,7 +50,7 @@ final mockBusinesses = [
     "address": "77 River St, Troy, NY",
     "goal": 500000.0,
     "numInvestors": 102,
-    "amountRaised": 320000,
+    "amountRaised": 320000.0, // Added .0 to ensure it's a double
     "yearFounded": "2021",
   },
 ];
