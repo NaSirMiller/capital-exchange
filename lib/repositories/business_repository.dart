@@ -30,6 +30,28 @@ class BusinessRepository {
     }
   }
 
+  Future<Business?> getBusinessById(String businessId) async {
+    Log.trace("Fetching business with id $businessId");
+    try {
+      final doc = await _firestore
+          .collection(_businessesCollectionName)
+          .doc(businessId)
+          .get();
+
+      if (!doc.exists) {
+        Log.trace("Business with id $businessId not found");
+        return null;
+      }
+
+      return Business.fromJson(doc.data()!);
+    } on FirebaseException catch (e) {
+      Log.error(
+        "FirebaseException occurred while fetching business $businessId: $e",
+      );
+      throw const BusinessRepositoryException("A FirebaseException occurred");
+    }
+  }
+
   Future<List<Business>> getAllBusinesses() async {
     Log.trace("Getting all businesses");
 

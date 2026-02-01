@@ -18,7 +18,7 @@ class BusinessStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = raised / goal;
+    final progress = goal > 0 ? (raised / goal).clamp(0.0, 1.0) : 0.0;
 
     return Column(
       children: [
