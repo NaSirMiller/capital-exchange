@@ -1,4 +1,3 @@
-import "dart:io";
 import "dart:typed_data";
 
 import "package:capital_commons/clients/auth_client.dart";
