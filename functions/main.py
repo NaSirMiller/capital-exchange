@@ -31,6 +31,7 @@ def exchange_business_to_investor(
     req: https_fn.CallableRequest[dict[str, Any]],
 ) -> dict[str, Any]:
     """Exchange shares from business to investor (callable function)"""
+    data = req.data
 
     logger.info("=" * 50)
     logger.info("EXCHANGE CALLABLE FUNCTION CALLED")
@@ -71,26 +72,25 @@ def exchange_business_to_investor(
             business_id=business_id,
             investor_id=investor_id,
         )
-        return {"status": 500, "error": f"Exchange failed: {str(e)}"}
-    except Exception as e:
-        logger.error(f"Unexpected error during exchange: {e}")
         return {"status": 500, "error": "An internal error occurred"}
 
+    return {"status": 200}
 
-@https_fn.on_request()
+
+@https_fn.on_call()
 def get_revenue_and_expenses_from_pl_statement(
-    req: https_fn.Request,
-) -> https_fn.Response:
-    """Get revenue and expenses from P&L statement"""
-    import json
+    req: https_fn.CallableRequest[dict[str, Any]],
+) -> dict[str, Any]:
+    logger.debug(f"Doing expense stuff: {req}")
+    data = req.data
+    pl_statement_path = data.get("pl_statement_path")
 
-    headers = {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-    }
-
-    if req.method == "OPTIONS":
-        return https_fn.Response("", status=204, headers=headers)
+    if not pl_statement_path:
+        logger.error("pl_statement_path is not valid (empty or None)")
+        return {
+            "status": 400,
+            "error": "pl_statement_path is not valid (empty or None)",
+        }
 
     try:
         data = req.get_json(force=True, silent=True)
@@ -116,6 +116,9 @@ def get_revenue_and_expenses_from_pl_statement(
             )
 
         rev_and_expenses = doc_client.get_statement_details(pl_statement_path)
+    except DocumentExtractionsError as e:
+        logger.error(f"DocumentExtractionError occurred: {e}")
+        return {"status": 500, "error": "An internal error occurred"}
 
         return https_fn.Response(
             response=json.dumps(rev_and_expenses), status=200, headers=headers
