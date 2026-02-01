@@ -240,7 +240,7 @@ class BusinessSignupPage extends HookWidget {
         return Stage2BusinessInfo(
           onNext: onNext,
           businessNameController: businessNameController,
-          descriptionController: descriptionController, // ✅ add this
+          descriptionController: descriptionController,
           addressController: addressController,
           yearController: yearController,
           selectedType: selectedType,

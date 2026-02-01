@@ -1,4 +1,6 @@
+import "package:capital_commons/features/business_dashboard/cubit/issue_shares_cubit.dart";
 import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_hooks/flutter_hooks.dart";
 import "package:go_router/go_router.dart";
 
@@ -15,18 +17,16 @@ class IssueSharesPage extends HookWidget {
     final priceController = useTextEditingController();
     final reasonController = useTextEditingController();
 
-    // ─────────────────────────────────────────────
-    // PLACEHOLDER SHARE DATA (replace later)
-    // ─────────────────────────────────────────────
+    // TODO: Add call to valuation via cubit
     const int totalSharesIssued = 1000;
     const int maxAdditionalSharesAllowed =
         500; // 50% dilution cap (placeholder)
-    const int currentSharePrice = 125;
-    const int marketCap = totalSharesIssued * currentSharePrice;
+    const double currentSharePrice = 125.0;
+    const double marketCap = totalSharesIssued * currentSharePrice;
     // ─────────────────────────────────────────────
 
     return Scaffold(
-      body: Container(
+      body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -89,7 +89,7 @@ class IssueSharesPage extends HookWidget {
                             "Issue additional shares to raise more funding for your business",
                             style: TextStyle(
                               fontSize: 15,
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                               height: 1.5,
                             ),
                           ),
@@ -100,10 +100,10 @@ class IssueSharesPage extends HookWidget {
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.08),
+                              color: Colors.white.withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.white.withValues(alpha: 0.1),
                                 width: 1,
                               ),
                             ),
@@ -115,7 +115,7 @@ class IssueSharesPage extends HookWidget {
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withValues(alpha: 0.9),
                                   ),
                                 ),
                                 const SizedBox(height: 16),
@@ -124,12 +124,12 @@ class IssueSharesPage extends HookWidget {
                                   value: totalSharesIssued.toString(),
                                 ),
                                 const SizedBox(height: 8),
-                                _InfoRow(
+                                const _InfoRow(
                                   label: "Current Share Price",
                                   value: "\$$currentSharePrice",
                                 ),
                                 const SizedBox(height: 8),
-                                _InfoRow(
+                                const _InfoRow(
                                   label: "Market Cap",
                                   value: "\$$marketCap",
                                 ),
@@ -177,10 +177,14 @@ class IssueSharesPage extends HookWidget {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF39C12).withOpacity(0.1),
+                              color: const Color(
+                                0xFFF39C12,
+                              ).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: const Color(0xFFF39C12).withOpacity(0.3),
+                                color: const Color(
+                                  0xFFF39C12,
+                                ).withValues(alpha: 0.3),
                                 width: 1,
                               ),
                             ),
@@ -197,7 +201,9 @@ class IssueSharesPage extends HookWidget {
                                     "New shares will dilute existing shareholders. Investors will be notified.",
                                     style: TextStyle(
                                       fontSize: 13,
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.8,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -212,7 +218,7 @@ class IssueSharesPage extends HookWidget {
                             width: double.infinity,
                             height: 52,
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 final requestedShares =
                                     int.tryParse(sharesController.text) ?? 0;
 
@@ -228,7 +234,14 @@ class IssueSharesPage extends HookWidget {
                                   return;
                                 }
 
-                                // TODO: handle share issuance
+                                await context
+                                    .read<IssueSharesCubit>()
+                                    .issueShares(
+                                      totalSharesIssued: totalSharesIssued,
+                                      sharePrice: currentSharePrice,
+                                    );
+                                if (!context.mounted) return;
+
                                 context.pop();
                               },
                               style: ElevatedButton.styleFrom(
@@ -283,11 +296,14 @@ class _InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.06),
+        color: Colors.white.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
       ),
       child: TextField(
         controller: controller,
@@ -302,7 +318,7 @@ class _InputField extends StatelessWidget {
           border: InputBorder.none,
           hintText: label,
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.35),
+            color: Colors.white.withValues(alpha: 0.35),
             fontSize: 15,
           ),
           prefixIcon: Padding(
@@ -331,7 +347,10 @@ class _InfoRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.7)),
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.white.withValues(alpha: .7),
+          ),
         ),
         Text(
           value,

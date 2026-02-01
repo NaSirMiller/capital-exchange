@@ -29,7 +29,7 @@ final goRouter = GoRouter(
 
     // If user is logged in and on landing page, redirect to market
     if (currentUser != null && isOnLanding) {
-      return '/market';
+      return "/market";
     }
 
     // No redirect needed
@@ -78,7 +78,7 @@ final goRouter = GoRouter(
     /// Settings
     GoRoute(
       path: "/settings",
-      builder: (_, __) => const SettingsPage(), // ✅ add settings page
+      builder: (_, _) => const SettingsPage(), //
     ),
 
     /// Market - Order matters! Specific routes before parameterized routes

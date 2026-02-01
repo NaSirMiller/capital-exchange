@@ -2,6 +2,7 @@ import "package:capital_commons/clients/auth_client.dart";
 import "package:capital_commons/clients/exchange_client.dart";
 import "package:capital_commons/clients/file_storage_client.dart";
 import "package:capital_commons/clients/pl_processing_client.dart";
+import "package:capital_commons/clients/valuation_client.dart";
 import "package:capital_commons/core/logger.dart";
 import "package:capital_commons/features/user/user_cubit.dart";
 import "package:capital_commons/firebase_options.dart";
@@ -47,4 +48,6 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(() => FileStorageClient());
 
   getIt.registerLazySingleton(() => PlProcessingClient());
+
+  getIt.registerLazySingleton(() => BusinessValuationClient());
 }

@@ -15,9 +15,14 @@ from firebase_functions.firestore_fn import (
     on_document_created,
 )
 from firebase_functions.options import set_global_options
+from functions.repositories.business_repository import BusinessRepositoryError
 from services.exchange_shares_service import (
     ExchangeSharesServiceError,
     exchange_shares_service,
+)
+from services.business_evaluation_service import (
+    business_evaluation_service,
+    BusinessEvaluationServiceError,
 )
 
 # Initialize Firebase Admin SDK
@@ -138,3 +143,47 @@ def get_revenue_and_expenses_from_pl_statement(
             status=500,
             headers=headers,
         )
+
+
+@https_fn.on_call()
+def get_business_valuation(
+    req: https_fn.CallableRequest[dict[str, Any]],
+) -> dict[str, Any]:
+    logger.debug(f"get_business_valuation called with data={req.data}")
+
+    data = req.data or {}
+    business_id = data.get("business_id")
+
+    if not business_id or not isinstance(business_id, str):
+        logger.error("business_id is required and must be a non-empty string")
+        return {
+            "status": 400,
+            "error": "business_id is required and must be a non-empty string",
+        }
+
+    try:
+        results = business_evaluation_service.get_evaluation(business_id)
+        if hasattr(results, "to_json"):
+            payload = results.to_json()
+        else:
+            payload = {
+                "pricePerShare": results.pricePerShare,
+                "sharesAllowed": results.sharesAllowed,
+                "businessClass": results.businessClass,
+            }
+
+        return {"status": 200, "data": payload}
+
+    except BusinessRepositoryError as e:
+        logger.error(f"BusinessRepositoryError for business_id={business_id}: {e}")
+        return {"status": 404, "error": "Business not found"}
+
+    except BusinessEvaluationServiceError as e:
+        logger.error(
+            f"BusinessEvaluationServiceError for business_id={business_id}: {e}"
+        )
+        return {"status": 500, "error": "Could not evaluate business"}
+
+    except Exception as e:
+        logger.error(f"Unexpected error in get_business_valuation: {e}")
+        return {"status": 500, "error": "An internal error occurred"}

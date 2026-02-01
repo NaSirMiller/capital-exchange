@@ -84,3 +84,6 @@ class BusinessEvaluationService:
             sharesAllowed=shares_allowed,
             businessClass=business_class,
         )
+
+
+business_evaluation_service = BusinessEvaluationService()
