@@ -1,14 +1,19 @@
 import "package:flutter/material.dart";
 import "package:capital_commons/shared/dashboard_section.dart";
+import "package:capital_commons/models/business.dart";
 
 class FundingProgress extends StatelessWidget {
-  const FundingProgress({super.key});
+  final Business business;
+
+  const FundingProgress({super.key, required this.business});
 
   @override
   Widget build(BuildContext context) {
-    const current = 87500.0;
-    const goal = 100000.0;
-    const progress = current / goal;
+    final current = business.amountRaised.toDouble();
+    final goal = business.valuation;
+    final progress = goal > 0 ? current / goal : 0.0;
+    final sharesRemaining = business.sharesAvailable;
+    final sharesSold = business.totalSharesIssued - business.sharesAvailable;
 
     return DashboardSection(
       title: "Funding Progress",
@@ -27,7 +32,7 @@ class FundingProgress extends StatelessWidget {
                 ),
               ),
               FractionallySizedBox(
-                widthFactor: progress,
+                widthFactor: progress.clamp(0.0, 1.0),
                 child: Container(
                   height: 12,
                   decoration: BoxDecoration(
@@ -58,7 +63,7 @@ class FundingProgress extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "\$${current.toStringAsFixed(0)}",
+                    "\$${_formatCurrency(current)}",
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
@@ -97,7 +102,7 @@ class FundingProgress extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "\$${goal.toStringAsFixed(0)}",
+                    "\$${_formatCurrency(goal)}",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
@@ -105,7 +110,7 @@ class FundingProgress extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "Goal",
+                    "Valuation",
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.white.withOpacity(0.6),
@@ -135,7 +140,7 @@ class FundingProgress extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  "\$${(goal - current).toStringAsFixed(0)} remaining • ${(1000 * (1 - progress)).toStringAsFixed(0)} shares available",
+                  "\$${_formatCurrency(goal - current)} remaining • $sharesRemaining shares available",
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.white.withOpacity(0.7),
@@ -147,5 +152,15 @@ class FundingProgress extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatCurrency(double amount) {
+    if (amount >= 1000000) {
+      return "${(amount / 1000000).toStringAsFixed(1)}M";
+    } else if (amount >= 1000) {
+      return "${(amount / 1000).toStringAsFixed(1)}K";
+    } else {
+      return amount.toStringAsFixed(0);
+    }
   }
 }

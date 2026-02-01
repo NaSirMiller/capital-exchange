@@ -1,14 +1,25 @@
 import "package:flutter/material.dart";
 import "package:capital_commons/shared/metric_card.dart";
+import "package:capital_commons/models/business.dart";
 
 class StatsOverview extends StatelessWidget {
-  const StatsOverview({super.key});
+  final Business business;
+
+  const StatsOverview({super.key, required this.business});
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth >= 1024;
     final isTablet = screenWidth >= 768;
+
+    // Calculate stats from business data
+    final totalRaised = business.amountRaised.toDouble();
+    final goal = business.valuation;
+    final percentOfGoal = goal > 0 ? (totalRaised / goal * 100) : 0.0;
+    final numInvestors = business.numInvestors;
+    final sharePrice = business.sharePrice;
+    final marketCap = business.totalSharesIssued * sharePrice;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -18,11 +29,11 @@ class StatsOverview extends StatelessWidget {
               Expanded(
                 child: MetricCard(
                   title: "Total Raised",
-                  value: "\$87,500",
-                  subtitle: "87.5% of goal",
+                  value: "\$${_formatCurrency(totalRaised)}",
+                  subtitle: "${percentOfGoal.toStringAsFixed(1)}% of goal",
                   icon: Icons.account_balance_wallet_outlined,
                   color: const Color(0xFF2ECC71),
-                  trend: "+\$12,500",
+                  trend: "+\$12.5K", // TODO: Calculate actual trend
                   trendPositive: true,
                 ),
               ),
@@ -30,11 +41,11 @@ class StatsOverview extends StatelessWidget {
               Expanded(
                 child: MetricCard(
                   title: "Investors",
-                  value: "24",
+                  value: "$numInvestors",
                   subtitle: "Active shareholders",
                   icon: Icons.people_outline,
                   color: const Color(0xFF4A90D9),
-                  trend: "+3 this week",
+                  trend: "+3 this week", // TODO: Calculate actual trend
                   trendPositive: true,
                 ),
               ),
@@ -42,20 +53,20 @@ class StatsOverview extends StatelessWidget {
               Expanded(
                 child: MetricCard(
                   title: "Share Price",
-                  value: "\$125.00",
+                  value: "\$${sharePrice.toStringAsFixed(2)}",
                   subtitle: "Current market value",
                   icon: Icons.show_chart,
                   color: const Color(0xFFE74C3C),
-                  trend: "+\$25.00 (25%)",
-                  trendPositive: true,
+                  trend: "Stable", // TODO: Calculate actual trend
+                  trendPositive: null,
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: MetricCard(
                   title: "Market Cap",
-                  value: "\$125K",
-                  subtitle: "1,000 total shares",
+                  value: "\$${_formatCurrency(marketCap)}",
+                  subtitle: "${business.totalSharesIssued} total shares",
                   icon: Icons.pie_chart_outline,
                   color: const Color(0xFF9B59B6),
                   trend: "Fully diluted",
@@ -72,11 +83,11 @@ class StatsOverview extends StatelessWidget {
                   Expanded(
                     child: MetricCard(
                       title: "Total Raised",
-                      value: "\$87,500",
-                      subtitle: "87.5% of goal",
+                      value: "\$${_formatCurrency(totalRaised)}",
+                      subtitle: "${percentOfGoal.toStringAsFixed(1)}% of goal",
                       icon: Icons.account_balance_wallet_outlined,
                       color: const Color(0xFF2ECC71),
-                      trend: "+\$12,500",
+                      trend: "+\$12.5K",
                       trendPositive: true,
                     ),
                   ),
@@ -84,7 +95,7 @@ class StatsOverview extends StatelessWidget {
                   Expanded(
                     child: MetricCard(
                       title: "Investors",
-                      value: "24",
+                      value: "$numInvestors",
                       subtitle: "Active shareholders",
                       icon: Icons.people_outline,
                       color: const Color(0xFF4A90D9),
@@ -100,20 +111,20 @@ class StatsOverview extends StatelessWidget {
                   Expanded(
                     child: MetricCard(
                       title: "Share Price",
-                      value: "\$125.00",
+                      value: "\$${sharePrice.toStringAsFixed(2)}",
                       subtitle: "Current market value",
                       icon: Icons.show_chart,
                       color: const Color(0xFFE74C3C),
-                      trend: "+\$25.00 (25%)",
-                      trendPositive: true,
+                      trend: "Stable",
+                      trendPositive: null,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: MetricCard(
                       title: "Market Cap",
-                      value: "\$125K",
-                      subtitle: "1,000 total shares",
+                      value: "\$${_formatCurrency(marketCap)}",
+                      subtitle: "${business.totalSharesIssued} total shares",
                       icon: Icons.pie_chart_outline,
                       color: const Color(0xFF9B59B6),
                       trend: "Fully diluted",
@@ -129,17 +140,17 @@ class StatsOverview extends StatelessWidget {
             children: [
               MetricCard(
                 title: "Total Raised",
-                value: "\$87,500",
-                subtitle: "87.5% of goal",
+                value: "\$${_formatCurrency(totalRaised)}",
+                subtitle: "${percentOfGoal.toStringAsFixed(1)}% of goal",
                 icon: Icons.account_balance_wallet_outlined,
                 color: const Color(0xFF2ECC71),
-                trend: "+\$12,500",
+                trend: "+\$12.5K",
                 trendPositive: true,
               ),
               const SizedBox(height: 12),
               MetricCard(
                 title: "Investors",
-                value: "24",
+                value: "$numInvestors",
                 subtitle: "Active shareholders",
                 icon: Icons.people_outline,
                 color: const Color(0xFF4A90D9),
@@ -149,18 +160,18 @@ class StatsOverview extends StatelessWidget {
               const SizedBox(height: 12),
               MetricCard(
                 title: "Share Price",
-                value: "\$125.00",
+                value: "\$${sharePrice.toStringAsFixed(2)}",
                 subtitle: "Current market value",
                 icon: Icons.show_chart,
                 color: const Color(0xFFE74C3C),
-                trend: "+\$25.00 (25%)",
-                trendPositive: true,
+                trend: "Stable",
+                trendPositive: null,
               ),
               const SizedBox(height: 12),
               MetricCard(
                 title: "Market Cap",
-                value: "\$125K",
-                subtitle: "1,000 total shares",
+                value: "\$${_formatCurrency(marketCap)}",
+                subtitle: "${business.totalSharesIssued} total shares",
                 icon: Icons.pie_chart_outline,
                 color: const Color(0xFF9B59B6),
                 trend: "Fully diluted",
@@ -171,5 +182,15 @@ class StatsOverview extends StatelessWidget {
         }
       },
     );
+  }
+
+  String _formatCurrency(double amount) {
+    if (amount >= 1000000) {
+      return "${(amount / 1000000).toStringAsFixed(1)}M";
+    } else if (amount >= 1000) {
+      return "${(amount / 1000).toStringAsFixed(1)}K";
+    } else {
+      return amount.toStringAsFixed(0);
+    }
   }
 }

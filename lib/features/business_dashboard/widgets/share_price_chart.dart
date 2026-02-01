@@ -1,11 +1,19 @@
 import "package:flutter/material.dart";
 import "package:capital_commons/shared/dashboard_section.dart";
+import "package:capital_commons/models/business.dart";
 
 class SharePriceChart extends StatelessWidget {
-  const SharePriceChart({super.key});
+  final Business business;
+
+  const SharePriceChart({super.key, required this.business});
 
   @override
   Widget build(BuildContext context) {
+    final currentPrice = business.sharePrice;
+    final initialPrice =
+        100.0; // TODO: Get from historical data or set when business created
+    final change = ((currentPrice - initialPrice) / initialPrice * 100);
+
     return DashboardSection(
       title: "Share Price History",
       action: TextButton(
@@ -36,18 +44,20 @@ class SharePriceChart extends StatelessWidget {
             children: [
               _ChartLegendItem(
                 label: "Initial",
-                value: "\$100",
+                value: "\$${initialPrice.toStringAsFixed(2)}",
                 color: Colors.white.withOpacity(0.5),
               ),
               _ChartLegendItem(
                 label: "Current",
-                value: "\$125",
+                value: "\$${currentPrice.toStringAsFixed(2)}",
                 color: const Color(0xFF4A90D9),
               ),
               _ChartLegendItem(
                 label: "Change",
-                value: "+25%",
-                color: const Color(0xFF2ECC71),
+                value: "${change >= 0 ? '+' : ''}${change.toStringAsFixed(1)}%",
+                color: change >= 0
+                    ? const Color(0xFF2ECC71)
+                    : const Color(0xFFE74C3C),
               ),
             ],
           ),
@@ -169,8 +179,8 @@ class _LineChartPainter extends CustomPainter {
         controlPoint.dy,
       );
     }
-    linePath.lineTo(points.last.dx, points.last.dy);
 
+    linePath.lineTo(points.last.dx, points.last.dy);
     canvas.drawPath(linePath, linePaint);
 
     // Draw points

@@ -35,12 +35,16 @@ class _LoginPageState extends State<LoginPage> {
     return BlocProvider(
       create: (context) => LoginCubit(),
       child: BlocConsumer<LoginCubit, LoginState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state.status == LoadingStatus.success) {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
             // Get user info to determine route
             final userCubit = getIt<UserCubit>();
+
+            // Wait a moment for UserCubit to update
+            await Future.delayed(const Duration(milliseconds: 100));
+
             final currentUser = userCubit.state.currentUser;
             final isSeller = currentUser?.userInfo?.isSeller ?? false;
 
