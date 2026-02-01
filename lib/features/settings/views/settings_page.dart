@@ -29,9 +29,16 @@ class _SettingsPageState extends State<SettingsPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () {
-            context.go(
-              "/investor/dashboard",
-            ); // Always go back to investor dashboard
+            // Get user type and navigate to appropriate dashboard
+            final userCubit = getIt<UserCubit>();
+            final currentUser = userCubit.state.currentUser;
+            final isSeller = currentUser?.userInfo?.isSeller ?? false;
+
+            if (isSeller) {
+              context.go("/business/dashboard");
+            } else {
+              context.go("/investor/dashboard");
+            }
           },
         ),
         title: const Text(
@@ -160,7 +167,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     await getIt<UserCubit>().logout();
 
                     // Navigate to landing page
-                    context.go("/");
+                    if (context.mounted) {
+                      context.go("/");
+                    }
                   },
                 ),
               ],

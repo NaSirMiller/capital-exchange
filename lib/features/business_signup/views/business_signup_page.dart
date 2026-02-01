@@ -43,7 +43,8 @@ class BusinessSignupPage extends HookWidget {
     final stages = [
       "Account",
       "Business Info",
-      "Financials",
+      "Upload",
+      "Summary",
       "Valuation",
       "Shares",
       "Legal",

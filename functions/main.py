@@ -1,3 +1,4 @@
+import json
 from typing import Any, Optional
 
 from clients.document_text_extraction_client import (

@@ -1,11 +1,46 @@
 import "package:flutter/material.dart";
 import "package:capital_commons/shared/dashboard_section.dart";
+import "package:capital_commons/models/business.dart";
 
 class DividendSchedule extends StatelessWidget {
-  const DividendSchedule({super.key});
+  final Business business;
+
+  const DividendSchedule({super.key, required this.business});
 
   @override
   Widget build(BuildContext context) {
+    final totalRaised = business.amountRaised.toDouble();
+    final dividendPercentage = business.dividendPercentage;
+    final totalPayout = totalRaised * (dividendPercentage / 100);
+    final perShareDividend = business.totalSharesIssued > 0
+        ? totalPayout / business.totalSharesIssued
+        : 0.0;
+    final numInvestors = business.numInvestors;
+
+    // Calculate next dividend date (placeholder - you can store this in Firestore)
+    final now = DateTime.now();
+    final nextQuarter = DateTime(
+      now.month <= 3 ? now.year : now.year + (now.month > 9 ? 1 : 0),
+      ((now.month - 1) ~/ 3 + 1) * 3 + 1,
+      1,
+    );
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final nextDividendDate =
+        "${months[nextQuarter.month - 1]} ${nextQuarter.day}, ${nextQuarter.year}";
+
     return DashboardSection(
       title: "Next Dividend",
       child: Column(
@@ -35,14 +70,14 @@ class DividendSchedule extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.calendar_today_outlined,
-                      color: const Color(0xFF4A90D9),
+                      color: Color(0xFF4A90D9),
                       size: 16,
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      "March 31, 2025",
+                      nextDividendDate,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -52,9 +87,9 @@ class DividendSchedule extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  "\$4,375",
-                  style: TextStyle(
+                Text(
+                  "\$${_formatCurrency(totalPayout)}",
+                  style: const TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF4A90D9),
@@ -62,7 +97,7 @@ class DividendSchedule extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Total Payout (5% of \$87,500)",
+                  "Total Payout (${dividendPercentage.toStringAsFixed(1)}% of \$${_formatCurrency(totalRaised)})",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.white.withOpacity(0.6),
@@ -77,9 +112,15 @@ class DividendSchedule extends StatelessWidget {
           // Details
           _DetailRow(label: "Payment Frequency", value: "Quarterly"),
           const SizedBox(height: 8),
-          _DetailRow(label: "Per Share Dividend", value: "\$5.00"),
+          _DetailRow(
+            label: "Per Share Dividend",
+            value: "\$${perShareDividend.toStringAsFixed(2)}",
+          ),
           const SizedBox(height: 8),
-          _DetailRow(label: "Shareholders", value: "24 investors"),
+          _DetailRow(
+            label: "Shareholders",
+            value: "$numInvestors investor${numInvestors != 1 ? 's' : ''}",
+          ),
 
           const SizedBox(height: 16),
 
@@ -96,14 +137,14 @@ class DividendSchedule extends StatelessWidget {
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: const [
                 Icon(
                   Icons.check_circle_outline,
-                  color: const Color(0xFF2ECC71),
+                  color: Color(0xFF2ECC71),
                   size: 16,
                 ),
-                const SizedBox(width: 8),
-                const Text(
+                SizedBox(width: 8),
+                Text(
                   "On Track • Profits reported",
                   style: TextStyle(
                     fontSize: 12,
@@ -117,6 +158,16 @@ class DividendSchedule extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatCurrency(double amount) {
+    if (amount >= 1000000) {
+      return "${(amount / 1000000).toStringAsFixed(1)}M";
+    } else if (amount >= 1000) {
+      return "${(amount / 1000).toStringAsFixed(1)}K";
+    } else {
+      return amount.toStringAsFixed(0);
+    }
   }
 }
 

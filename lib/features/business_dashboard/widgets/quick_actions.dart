@@ -3,7 +3,9 @@ import "package:go_router/go_router.dart";
 import "package:capital_commons/shared/dashboard_section.dart";
 
 class QuickActions extends StatelessWidget {
-  const QuickActions({super.key});
+  final String businessId;
+
+  const QuickActions({super.key, required this.businessId});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,9 @@ class QuickActions extends StatelessWidget {
             label: "Report Profits",
             subtitle: "Q1 2025 reporting due",
             color: const Color(0xFF4A90D9),
-            onTap: () {},
+            onTap: () {
+              // TODO: Navigate to profit reporting page
+            },
           ),
           const SizedBox(height: 12),
           _ActionButton(
@@ -26,7 +30,7 @@ class QuickActions extends StatelessWidget {
             subtitle: "Raise additional capital",
             color: const Color(0xFF2ECC71),
             onTap: () {
-              context.push("/business/issue-shares");
+              context.push("/business/issue-shares?businessId=$businessId");
             },
           ),
           const SizedBox(height: 12),
@@ -35,7 +39,9 @@ class QuickActions extends StatelessWidget {
             label: "Update Business Info",
             subtitle: "Keep your profile current",
             color: const Color(0xFF9B59B6),
-            onTap: () {},
+            onTap: () {
+              // TODO: Navigate to edit business page
+            },
           ),
           const SizedBox(height: 12),
           _ActionButton(
@@ -43,7 +49,9 @@ class QuickActions extends StatelessWidget {
             label: "View Analytics",
             subtitle: "Detailed performance metrics",
             color: const Color(0xFFE74C3C),
-            onTap: () {},
+            onTap: () {
+              // TODO: Navigate to analytics page
+            },
           ),
           const SizedBox(height: 12),
           _ActionButton(
@@ -51,7 +59,9 @@ class QuickActions extends StatelessWidget {
             label: "Message Investors",
             subtitle: "Send updates to shareholders",
             color: const Color(0xFF16A085),
-            onTap: () {},
+            onTap: () {
+              // TODO: Navigate to messaging page
+            },
           ),
         ],
       ),
