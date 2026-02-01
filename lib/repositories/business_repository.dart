@@ -1,4 +1,5 @@
 import "package:capital_commons/core/logger.dart";
+import "package:capital_commons/models/business.dart";
 import "package:capital_commons/models/create_business.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 
@@ -27,5 +28,30 @@ class BusinessRepository {
       );
       throw const BusinessRepositoryException("A FirebaseException occurred");
     }
+  }
+
+  Future<List<Business>> getAllBusinesses() async {
+    Log.trace("Getting all businesses");
+
+    late final QuerySnapshot<Map<String, dynamic>> results;
+    try {
+      results = await _firestore.collection(_businessesCollectionName).get();
+    } on FirebaseException catch (e) {
+      Log.error("FirebaseException occurred while getting all businesses: $e");
+      throw const BusinessRepositoryException("A FirebaseException occurred");
+    }
+
+    final businesses = <Business>[];
+    for (final doc in results.docs) {
+      try {
+        businesses.add(Business.fromJson(doc.data()));
+      } on TypeError catch (e) {
+        Log.warning("TypeError while converting doc to business: $e");
+      }
+    }
+
+    Log.debug("Loaded ${businesses.length} businesses");
+
+    return businesses;
   }
 }
