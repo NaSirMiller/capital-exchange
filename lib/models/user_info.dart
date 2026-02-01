@@ -6,7 +6,6 @@ part "user_info.g.dart";
 @freezed
 sealed class UserInfo with _$UserInfo {
   factory UserInfo({
-    required String userId,
     required bool isSeller,
     required String? profileLogoFilepath,
   }) = _UserInfo;

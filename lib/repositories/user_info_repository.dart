@@ -12,15 +12,15 @@ class UserInfoRepositoryException implements Exception {
 class UserInfoRepository {
   final _firestore = FirebaseFirestore.instance;
 
-  Future<void> saveUserInfo(UserInfo userInfo) async {
+  Future<void> saveUserInfo(String userId, UserInfo userInfo) async {
     try {
       await _firestore
           .collection("userInfo")
-          .doc(userInfo.userId)
+          .doc(userId)
           .set(userInfo.toJson());
     } on FirebaseException catch (e) {
       Log.error(
-        "FirebaseException occurred while creating user info for ${userInfo.userId}: $e",
+        "FirebaseException occurred while creating user info for $userId: $e",
       );
       throw const UserInfoRepositoryException("A FirebaseException occurred");
     }

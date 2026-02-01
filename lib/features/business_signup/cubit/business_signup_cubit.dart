@@ -84,7 +84,8 @@ class BusinessSignupCubit extends Cubit<BusinessSignupState> {
     // TODO: Add profile logo path to the store business info method
     try {
       await _userRepository.saveUserInfo(
-        UserInfo(userId: user.uid, isSeller: true, profileLogoFilepath: ""),
+        user.uid,
+        UserInfo(isSeller: true, profileLogoFilepath: ""),
       );
     } catch (_) {
       Log.error("Could not create user info");

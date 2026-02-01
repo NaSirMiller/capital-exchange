@@ -21,28 +21,6 @@ class InvestorSignupCubit extends Cubit<InvestorSignupState> {
   }) async {
     emit(state.copyWith(signupStatus: LoadingStatus.loading));
 
-    final user = _authClient.currentUser1;
-
-    if (user == null) {
-      emit(
-        state.copyWith(
-          signupStatus: LoadingStatus.failure,
-          message: "User is not signed in",
-        ),
-      );
-      emit(state.copyWith(message: null));
-      return;
-    }
-    // TODO: Add profile logo path to the store business info method
-    try {
-      await _userRepository.saveUserInfo(
-        UserInfo(userId: user.uid, isSeller: false, profileLogoFilepath: ""),
-      );
-    } catch (_) {
-      Log.error("Could not create user info");
-      emit(state.copyWith(message: "Could not create user info"));
-      emit(state.copyWith(message: null));
-    }
     try {
       await _authClient.signUpWithEmailAndPassword(
         email: email,
@@ -59,6 +37,30 @@ class InvestorSignupCubit extends Cubit<InvestorSignupState> {
           message: "An error occurred while signing up",
         ),
       );
+      emit(state.copyWith(message: null));
+    }
+
+    final user = _authClient.currentUser1;
+
+    if (user == null) {
+      emit(
+        state.copyWith(
+          signupStatus: LoadingStatus.failure,
+          message: "User is not signed in",
+        ),
+      );
+      emit(state.copyWith(message: null));
+      return;
+    }
+    // TODO: Add profile logo path to the store business info method
+    try {
+      await _userRepository.saveUserInfo(
+        user.uid,
+        UserInfo(isSeller: false, profileLogoFilepath: ""),
+      );
+    } catch (_) {
+      Log.error("Could not create user info");
+      emit(state.copyWith(message: "Could not create user info"));
       emit(state.copyWith(message: null));
     }
   }
