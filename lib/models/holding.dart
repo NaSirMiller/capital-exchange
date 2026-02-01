@@ -4,7 +4,7 @@ part "holding.freezed.dart";
 part "holding.g.dart";
 
 @freezed
-class Holding with _$Holding {
+sealed class Holding with _$Holding {
   const factory Holding({
     required String ticker,
     required double sharePrice,
