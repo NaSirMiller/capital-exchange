@@ -3,7 +3,9 @@ import "package:capital_commons/core/loading_status.dart";
 import "package:capital_commons/core/logger.dart";
 import "package:capital_commons/core/service_locator.dart";
 import "package:capital_commons/models/create_business.dart";
+import "package:capital_commons/models/user_info.dart";
 import "package:capital_commons/repositories/business_repository.dart";
+import "package:capital_commons/repositories/user_info_repository.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:freezed_annotation/freezed_annotation.dart";
 
@@ -14,6 +16,7 @@ class BusinessSignupCubit extends Cubit<BusinessSignupState> {
 
   final _authClient = getIt<AuthClient>();
   final _businessRepository = getIt<BusinessRepository>();
+  final _userRepository = getIt<UserInfoRepository>();
 
   Future<void> signUpWithEmail({
     required String email,
@@ -78,30 +81,45 @@ class BusinessSignupCubit extends Cubit<BusinessSignupState> {
     //   emit(state.copyWith(message: null));
     //   return;
     // }
-
-    await _businessRepository.createBusiness(
-      CreateBusiness(
-        uid: user.uid,
-        name: businessName,
-        description: "",
-        industry: "",
-        logoFilepath: "",
-        plDocFilepath: "",
-        projectedRevenue: revenue,
-        projectedExpenses: expenses,
-        projectedProfit: revenue - expenses,
-        valuation: state.valuation ?? 1.0,
-        totalSharesIssued: 0,
-        sharePrice: pricePerShare,
-        dividendPercentage: dividend,
-        isApproved: false,
-        address: address,
-        amountRaised: 0,
-        numInvestors: 0,
-        goal: -1, // TODO: Get from eval results
-        yearFounded: year,
-      ),
-    );
+    // TODO: Add profile logo path to the store business info method
+    try {
+      await _userRepository.saveUserInfo(
+        UserInfo(userId: user.uid, isSeller: true, profileLogoFilepath: ""),
+      );
+    } catch (_) {
+      Log.error("Could not create user info");
+      emit(state.copyWith(message: "Could not create user info"));
+      emit(state.copyWith(message: null));
+    }
+    try {
+      await _businessRepository.createBusiness(
+        CreateBusiness(
+          uid: user.uid,
+          name: businessName,
+          description: "",
+          industry: "",
+          logoFilepath: "",
+          plDocFilepath: "",
+          projectedRevenue: revenue,
+          projectedExpenses: expenses,
+          projectedProfit: revenue - expenses,
+          valuation: state.valuation ?? 1.0,
+          totalSharesIssued: 0,
+          sharePrice: pricePerShare,
+          dividendPercentage: dividend,
+          isApproved: false,
+          address: address,
+          amountRaised: 0,
+          numInvestors: 0,
+          goal: -1, // TODO: Get from eval results
+          yearFounded: year,
+        ),
+      );
+    } catch (_) {
+      Log.error("Could not create business");
+      emit(state.copyWith(message: "Could not create business"));
+      emit(state.copyWith(message: null));
+    }
 
     emit(state.copyWith(storeBusinessInfoStatus: LoadingStatus.success));
   }
