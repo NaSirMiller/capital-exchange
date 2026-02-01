@@ -1,6 +1,7 @@
 import "package:capital_commons/core/logger.dart";
 import "package:capital_commons/models/business.dart";
 import "package:capital_commons/models/create_business.dart";
+import "package:capital_commons/models/update_business.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 
 class BusinessRepositoryException implements Exception {
@@ -25,6 +26,21 @@ class BusinessRepository {
     } on FirebaseException catch (e) {
       Log.error(
         "FirebaseException occurred while creating business ${business.uid}: $e",
+      );
+      throw const BusinessRepositoryException("A FirebaseException occurred");
+    }
+  }
+
+  Future<void> updateBusiness(String businessId, UpdateBusiness updates) async {
+    Log.trace("Updating business with id $businessId");
+    try {
+      await _firestore
+          .collection(_businessesCollectionName)
+          .doc(businessId)
+          .update(updates.toJson());
+    } on FirebaseException catch (e) {
+      Log.error(
+        "FirebaseException occurred while updating business $businessId: $e",
       );
       throw const BusinessRepositoryException("A FirebaseException occurred");
     }
