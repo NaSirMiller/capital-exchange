@@ -1,6 +1,6 @@
 name: capital_commons
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -8,6 +8,8 @@ environment:
 
 dependencies:
   cloud_firestore: ^6.1.2
+  bloc: ^9.2.0
+  equatable: ^2.0.8
   firebase_auth: ^6.1.4
   firebase_core: ^4.4.0
   flutter:

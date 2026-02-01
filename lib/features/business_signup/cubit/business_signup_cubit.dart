@@ -54,7 +54,7 @@ class BusinessSignupCubit extends Cubit<BusinessSignupState> {
   }) async {
     emit(state.copyWith(storeBusinessInfoStatus: LoadingStatus.loading));
 
-    final user = _authClient.currentUser;
+    final user = _authClient.currentUser1;
 
     if (user == null) {
       emit(
