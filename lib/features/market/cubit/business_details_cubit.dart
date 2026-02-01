@@ -31,7 +31,7 @@ class BusinessDetailsCubit extends Cubit<BusinessDetailsState> {
 
       emit(
         state.copyWith(
-          loadBusinessStatus: LoadingStatus.loading,
+          loadBusinessStatus: LoadingStatus.success,
           business: business,
         ),
       );

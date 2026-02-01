@@ -61,7 +61,7 @@ class BusinessDetailPage extends HookWidget {
             );
           }
 
-          if (state.loadBusinessStatus.isFailure) {
+          if (state.loadBusinessStatus.isFailure || state.business == null) {
             return Scaffold(
               appBar: AppBar(),
               body: const Center(child: Text("Couldn't load business details")),
@@ -133,11 +133,11 @@ class BusinessDetailPage extends HookWidget {
 
                           // Stats
                           BusinessStats(
-                            price: business["price"] as double,
-                            raised: business["raised"] as double,
-                            goal: business["goal"] as double,
-                            investors: business["investors"] as int,
-                            dividend: business["dividend"] as double,
+                            price: state.business!.sharePrice,
+                            raised: 0.0, // TODO
+                            goal: 0.0, // TODO
+                            investors: 0, // TODO
+                            dividend: state.business!.dividendPercentage,
                           ),
 
                           const SizedBox(height: 24),
@@ -151,17 +151,18 @@ class BusinessDetailPage extends HookWidget {
                                   flex: 2,
                                   child: Column(
                                     children: [
-                                      BusinessAbout(
+                                      const BusinessAbout(
                                         description:
-                                            business["description"] as String,
+                                            "Description not available", // TODO
                                       ),
                                       const SizedBox(height: 24),
                                       FinancialsSection(
-                                        revenue: business["revenue"] as double,
+                                        revenue:
+                                            state.business!.projectedRevenue,
                                         expenses:
-                                            business["expenses"] as double,
+                                            state.business!.projectedExpenses,
                                         netProfit:
-                                            business["netProfit"] as double,
+                                            state.business!.projectedProfit,
                                       ),
                                     ],
                                   ),
@@ -169,10 +170,10 @@ class BusinessDetailPage extends HookWidget {
                                 const SizedBox(width: 24),
                                 Expanded(
                                   child: SharePurchaseCard(
-                                    price: business["price"] as double,
-                                    sharesAvailable:
-                                        business["sharesAvailable"] as int,
-                                    dividend: business["dividend"] as double,
+                                    price: state.business!.sharePrice,
+                                    sharesAvailable: 0, // TODO
+                                    dividend:
+                                        state.business!.dividendPercentage,
                                   ),
                                 ),
                               ],
@@ -180,20 +181,19 @@ class BusinessDetailPage extends HookWidget {
                           else ...[
                             // Stacked for mobile/tablet
                             SharePurchaseCard(
-                              price: business["price"] as double,
-                              sharesAvailable:
-                                  business["sharesAvailable"] as int,
-                              dividend: business["dividend"] as double,
+                              price: state.business!.sharePrice,
+                              sharesAvailable: 0, // TODO
+                              dividend: state.business!.dividendPercentage,
                             ),
                             const SizedBox(height: 24),
-                            BusinessAbout(
-                              description: business["description"] as String,
+                            const BusinessAbout(
+                              description: "Description not available", // TODO
                             ),
                             const SizedBox(height: 24),
                             FinancialsSection(
-                              revenue: business["revenue"] as double,
-                              expenses: business["expenses"] as double,
-                              netProfit: business["netProfit"] as double,
+                              revenue: state.business!.projectedRevenue,
+                              expenses: state.business!.projectedExpenses,
+                              netProfit: state.business!.projectedProfit,
                             ),
                           ],
 
