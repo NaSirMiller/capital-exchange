@@ -8,6 +8,7 @@ import "package:capital_commons/features/business_signup/views/business_signup_p
 import "package:capital_commons/features/investor_dashboard/views/investor_dashboard_page.dart";
 import "package:capital_commons/features/business_dashboard/views/business_dashboard_page.dart";
 import "package:capital_commons/features/market/views/market_page.dart";
+import "package:capital_commons/features/business_dashboard/views/issue_shares_page.dart";
 import "package:capital_commons/features/market/views/business_detail_page.dart";
 import "package:capital_commons/features/market/views/secondary_market_page.dart";
 import "package:capital_commons/features/market/views/secondary_listing_detail_page.dart";
@@ -61,6 +62,13 @@ final goRouter = GoRouter(
       path: "/business/dashboard",
       builder: (_, _) => const BusinessDashboardPage(),
     ),
+
+    /// Business actions
+    GoRoute(
+      path: "/business/issue-shares",
+      builder: (_, _) => const IssueSharesPage(),
+    ),
+
     GoRoute(
       path: "/investor/dashboard",
       builder: (_, _) => const InvestorDashboardPage(),

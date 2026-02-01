@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 import "package:capital_commons/shared/dashboard_section.dart";
 
 class QuickActions extends StatelessWidget {
@@ -11,7 +12,6 @@ class QuickActions extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 16),
-
           _ActionButton(
             icon: Icons.assessment_outlined,
             label: "Report Profits",
@@ -19,9 +19,17 @@ class QuickActions extends StatelessWidget {
             color: const Color(0xFF4A90D9),
             onTap: () {},
           ),
-
           const SizedBox(height: 12),
-
+          _ActionButton(
+            icon: Icons.add_business_outlined,
+            label: "Issue More Shares",
+            subtitle: "Raise additional capital",
+            color: const Color(0xFF2ECC71),
+            onTap: () {
+              context.push("/business/issue-shares");
+            },
+          ),
+          const SizedBox(height: 12),
           _ActionButton(
             icon: Icons.edit_outlined,
             label: "Update Business Info",
@@ -29,9 +37,7 @@ class QuickActions extends StatelessWidget {
             color: const Color(0xFF9B59B6),
             onTap: () {},
           ),
-
           const SizedBox(height: 12),
-
           _ActionButton(
             icon: Icons.bar_chart_outlined,
             label: "View Analytics",
@@ -39,14 +45,12 @@ class QuickActions extends StatelessWidget {
             color: const Color(0xFFE74C3C),
             onTap: () {},
           ),
-
           const SizedBox(height: 12),
-
           _ActionButton(
             icon: Icons.message_outlined,
             label: "Message Investors",
             subtitle: "Send updates to shareholders",
-            color: const Color(0xFF2ECC71),
+            color: const Color(0xFF16A085),
             onTap: () {},
           ),
         ],
