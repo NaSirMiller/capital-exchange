@@ -1,8 +1,11 @@
-from models.portfolio import InvestorPortfolio
-from models.user import User
-from models.business import Business
-from google.cloud import firestore
+from firebase_admin.exceptions import FirebaseError
+from firebase_admin.firestore import firestore
 from google.api_core.exceptions import GoogleAPIError
+
+from core import singletons
+from core.logger import logger
+from models.business import Business
+from models.portfolio import Portfolio
 
 
 class ExchangeRepositoryError(Exception):
@@ -11,63 +14,70 @@ class ExchangeRepositoryError(Exception):
 
 class ExchangeRepository:
     def __init__(self) -> None:
-        self._firestore_client: firestore.Client = firestore.client()
+        self._firestore_client: firestore.Client = singletons.firestore_client
 
-    def get_investor_portfolio(self, investor_id: str) -> InvestorPortfolio:
+    def get_investor_portfolio(self, investor_id: str) -> Portfolio:
         try:
-            raw_portfolio = (
+            portfolio = (
                 self._firestore_client.collection("portfolios")
                 .document(investor_id)
                 .get()
             )
         except GoogleAPIError as e:
             raise ExchangeRepositoryError(
-                f"An error occurred retrieving the portfolio for investor {investor_id}"
+                f"An error occurred retrieving the portfolio for investor {investor_id}: {e}"
             )
 
-        if not raw_portfolio.exists():
-            raise ExchangeRepository(
+        assert isinstance(portfolio, firestore.DocumentSnapshot)
+
+        if not portfolio.exists:
+            raise ExchangeRepositoryError(
                 f"Investor {investor_id} does not have a portfolio"
             )
 
-        raw_portfolio_data = raw_portfolio.to_dict()
+        raw_portfolio_data = portfolio.to_dict()
+
+        assert raw_portfolio_data is not None
 
         try:
-            portfolio = InvestorPortfolio.model_validate_json(raw_portfolio_data)
+            portfolio = Portfolio.model_validate(raw_portfolio_data)
         except Exception as e:
             raise ExchangeRepositoryError(f"Could not convert to portfolio object: {e}")
 
         return portfolio
 
-    def get_user(self, user_id: str) -> User:
-        pass
+    # def get_user(self, user_id: str) -> User:
+    #     pass
 
-    def assert_investor_can_sell(
+    def can_investor_sell(
         self,
         requested_ticker: str,
         requested_num_shares: int,
-        portfolio: InvestorPortfolio,
+        portfolio: Portfolio,
     ) -> bool:
+        holdings = portfolio.holdings
         try:
-            holdings: firestore.CollectionReference = portfolio.holdings
-        except Exception as e:
-            raise ExchangeRepositoryError(
-                "Could not find holdings for the provided portfolio"
-            )
-        try:
-            matching_holdings: list[firestore.DocumentSnapshot] = (
+            matching_holdings: list[firestore.DocumentSnapshot] = list(
                 holdings.where("ticker", "==", requested_ticker)
                 .where("share_count", ">=", requested_num_shares)
                 .where("isApproved", "==", True)
                 .get()
             )
-        except Exception as e:
+        except FirebaseError as e:
             raise ExchangeRepositoryError("Issue retrieving holding data for portfolio")
 
-        if not matching_holdings or any(matching_holdings.exists()):
-            raise ExchangeRepositoryError(
-                f"User does not have any valid holdings for {requested_ticker}"
+        if len(matching_holdings) == 0:
+            return False
+
+        if len(matching_holdings) > 1:
+            logger.error(
+                "Number of matching holdings is not 1",
+                num_matching_holdings=len(matching_holdings),
+                requested_ticker=requested_ticker,
             )
+            raise ExchangeRepositoryError("Number of matching holdings is not 1")
+
+        return True
 
     def assert_business_can_sell(
         self,
@@ -75,17 +85,13 @@ class ExchangeRepository:
         requested_num_shares: int,
         business: Business,
     ) -> bool:
-        business_data = business.model_dump()
-        is_approved: bool = business.get("isApproved", False)
+        is_approved = business.isApproved
 
-        if (
-            not is_approved
-            or (business_data.get("totalSharesIssued", 0) < requested_num_shares)
-            or (business_data.get("ticker", "") == requested_ticker)
-        ):
-            raise ExchangeRepositoryError(
-                f"Business does not have the ability to sell {requested_ticker} shares."
-            )
+        return (
+            is_approved
+            and business.totalSharedIssues < requested_num_shares
+            and business.ticker == requested_ticker
+        )
 
 
 exchange_repository = ExchangeRepository()

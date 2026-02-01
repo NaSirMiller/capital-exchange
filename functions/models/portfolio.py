@@ -1,12 +1,7 @@
-from pydantic import BaseModel
 from google.cloud import firestore
+from pydantic import BaseModel
 
 
-class IncomingInvestorPortfolio(BaseModel):
-    user_id: str
-    holdings: firestore.CollectionReference
-
-
-class InvestorPortfolio(BaseModel):
+class Portfolio(BaseModel):
     user_id: str
     holdings: firestore.CollectionReference
