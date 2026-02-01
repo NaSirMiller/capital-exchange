@@ -20,6 +20,11 @@ sealed class CreateBusiness with _$CreateBusiness {
     required double sharePrice,
     required double dividendPercentage,
     required bool isApproved,
+    required String address,
+    required double goal,
+    required int numInvestors,
+    required int amountRaised,
+    required String yearFounded,
   }) = _CreateBusiness;
 
   factory CreateBusiness.fromJson(Map<String, dynamic> json) =>

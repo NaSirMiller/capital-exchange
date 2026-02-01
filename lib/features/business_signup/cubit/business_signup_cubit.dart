@@ -95,6 +95,11 @@ class BusinessSignupCubit extends Cubit<BusinessSignupState> {
         sharePrice: pricePerShare,
         dividendPercentage: dividend,
         isApproved: false,
+        address: address,
+        amountRaised: 0,
+        numInvestors: 0,
+        goal: -1, // TODO: Get from eval results
+        yearFounded: year,
       ),
     );
 

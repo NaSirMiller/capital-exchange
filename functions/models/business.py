@@ -19,3 +19,8 @@ class Business(BaseModel):
     divdendPercentage: Optional[float]
     isApproved: bool
     ticker: str
+    address: str
+    year_founded: str
+    goal: int  # prices per shares * sharesAllowed
+    numInvestors: int
+    amountRaised: int

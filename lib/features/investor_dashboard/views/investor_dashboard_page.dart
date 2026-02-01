@@ -11,55 +11,53 @@ import "package:capital_commons/models/business.dart";
 
 // Temporary mock businesses
 final mockBusinesses = [
-  Business(
-    uid: "b1",
-    name: "Acme Corp",
-    description: "Tech startup",
-    industry: "Tech",
-    logoFilepath: null,
-    plDocFilepath: null,
-    projectedRevenue: 500000,
-    projectedExpenses: 200000,
-    projectedProfit: 300000,
-    valuation: 2000000,
-    totalSharesIssued: 1000,
-    sharePrice: 25.0,
-    dividendPercentage: 2.0,
-    isApproved: true,
-  ),
-  Business(
-    uid: "b2",
-    name: "Green Energy LLC",
-    description: "Renewable energy",
-    industry: "Energy",
-    logoFilepath: null,
-    plDocFilepath: null,
-    projectedRevenue: 750000,
-    projectedExpenses: 300000,
-    projectedProfit: 450000,
-    valuation: 3500000,
-    totalSharesIssued: 2000,
-    sharePrice: 30.0,
-    dividendPercentage: 1.5,
-    isApproved: true,
-  ),
-  Business(
-    uid: "b3",
-    name: "Blue Ocean Foods",
-    description: "Sustainable seafood company",
-    industry: "Food & Beverage",
-    logoFilepath: null,
-    plDocFilepath: null,
-    projectedRevenue: 600000,
-    projectedExpenses: 250000,
-    projectedProfit: 350000,
-    valuation: 2500000,
-    totalSharesIssued: 1500,
-    sharePrice: 20.0,
-    dividendPercentage: 1.8,
-    isApproved: true,
-  ),
+  {
+    "uid": "biz_001",
+    "name": "Green Valley Farms",
+    "description": "Organic produce and local goods",
+    "industry": "Agriculture",
+    "logoFilepath": null,
+    "plDocFilepath": null,
+    "projectedRevenue": 450000.0,
+    "projectedExpenses": 280000.0,
+    "projectedProfit": 170000.0,
+    "valuation": 1200000.0,
+    "totalSharesIssued": 100000,
+    "sharePrice": 12.0,
+    "dividendPercentage": 5.0,
+    "isApproved": true,
+    "address": "123 Farm Lane, Albany, NY",
+    "goal": 250000.0,
+    "numInvestors": 48,
+    "amountRaised": 185000,
+    "yearFounded": "2018",
+  },
+  {
+    "uid": "biz_002",
+    "name": "Hudson Tech Co",
+    "description": "IoT solutions for smart buildings",
+    "industry": "Technology",
+    "logoFilepath": "logos/hudson.png",
+    "plDocFilepath": "docs/hudson_pl.pdf",
+    "projectedRevenue": 950000.0,
+    "projectedExpenses": 640000.0,
+    "projectedProfit": 310000.0,
+    "valuation": 2400000.0,
+    "totalSharesIssued": 200000,
+    "sharePrice": 15.0,
+    "dividendPercentage": 3.5,
+    "isApproved": false,
+    "address": "77 River St, Troy, NY",
+    "goal": 500000.0,
+    "numInvestors": 102,
+    "amountRaised": 320000,
+    "yearFounded": "2021",
+  },
 ];
+
+final List<Business> businesses = mockBusinesses
+    .map((e) => Business.fromJson(e as Map<String, dynamic>))
+    .toList();
 
 class InvestorDashboardPage extends HookWidget {
   const InvestorDashboardPage({super.key});
@@ -76,11 +74,7 @@ class InvestorDashboardPage extends HookWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0A1628),
-              Color(0xFF1A2E4A),
-              Color(0xFF0D3B66),
-            ],
+            colors: [Color(0xFF0A1628), Color(0xFF1A2E4A), Color(0xFF0D3B66)],
           ),
         ),
         child: SafeArea(
@@ -91,7 +85,7 @@ class InvestorDashboardPage extends HookWidget {
                 floating: true,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-                iconTheme: const IconThemeData(color: Colors.white), // ✅ CC-39
+                iconTheme: const IconThemeData(color: Colors.white),
                 title: const Text(
                   "Investor Dashboard",
                   style: TextStyle(
@@ -139,19 +133,17 @@ class InvestorDashboardPage extends HookWidget {
                               children: [
                                 const HoldingsList(),
                                 const SizedBox(height: 24),
-                                AvailableBusinessesList(
-                                  businesses: mockBusinesses, // ✅ CC-39
-                                ),
+                                AvailableBusinessesList(businesses: businesses),
                               ],
                             ),
                           ),
                           const SizedBox(width: 24),
-                          Expanded(
+                          const Expanded(
                             child: Column(
                               children: [
-                                const TransactionsList(),
-                                const SizedBox(height: 24),
-                                const QuickActions(),
+                                TransactionsList(),
+                                SizedBox(height: 24),
+                                QuickActions(),
                               ],
                             ),
                           ),
@@ -160,7 +152,7 @@ class InvestorDashboardPage extends HookWidget {
                     else ...[
                       const HoldingsList(),
                       const SizedBox(height: 24),
-                      AvailableBusinessesList(businesses: mockBusinesses),
+                      AvailableBusinessesList(businesses: businesses),
                       const SizedBox(height: 24),
                       const TransactionsList(),
                       const SizedBox(height: 24),
